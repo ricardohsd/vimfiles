@@ -5,10 +5,9 @@ Cross-platform vimfiles (Mac OS X and Linux)
 ## Usage
 
 ``` bash
-git clone git@github.com:sobrinho/vimfiles.git path
+git clone git@github.com:ricardohsd/vimfiles.git ~/.vim
 
-ln -s path ~/.vim
-ln -s path/vimrc ~/.vimrc
+ln -s ~/.vim/vimrc ~/.vimrc
 ```
 
 ## Credits
