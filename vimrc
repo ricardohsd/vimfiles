@@ -1,29 +1,51 @@
 " pathogen
-execute pathogen#infect()
+call pathogen#infect()
 
 " colors
 syntax on
 
 if has('gui_running')
-  set background=light
+  set guifont=Monaco:h18
+  set background=dark
 else
   set background=dark
 endif
 
 colorscheme solarized
 
+set guioptions-=T " no toolbar set guioptions-=m " no menus
+set guioptions-=r " no scrollbar on the right
+set guioptions-=R " no scrollbar on the right
+set guioptions-=l " no scrollbar on the left
+set guioptions-=b " no scrollbar on the bottom
+set guioptions=aiA
+set cc=80
+
+set statusline=%<%f\ (%{&ft})\ %-4(%m%)%=%-19(%3l,%02c%03V%)
+set showmode
+set laststatus=2
+
+let mapleader = "\\"
+
+" Mapping <tab> to chage tabs on commands mode
+nmap <tab> :tabnext<CR>
+
+" allow navigate with hidden buffers
+set hidden
+
 " style
 set number
 set autoindent
 set cursorline
-set ruler
-
-set colorcolumn=80
-autocmd FileType gitcommit setlocal colorcolumn=72
 
 " whitespace
+set tabstop=2
+set shiftwidth=2
+set softtabstop=2
+set expandtab
 set list
-set listchars=tab:\ \ ,trail:·
+set listchars=tab:\ \ ,trail:
+set nowrap
 
 " searching
 set hlsearch
@@ -31,14 +53,12 @@ set incsearch
 set ignorecase
 set smartcase
 
-" Spell checking
-"
-" See: http://robots.thoughtbot.com/vim-spell-checking/
-autocmd BufRead,BufNewFile *.md setlocal spell
-autocmd BufRead,BufNewFile *.md setlocal complete+=kspell
-
 " Display incomplete commands
 set showcmd
+
+" Prevent Vim from clobbering the scrollback buffer. See
+" http://www.shallowsky.com/linux/noaltscreen.html
+set t_ti= t_te=
 
 " Keep more context when scrolling off the end of a buffer
 set scrolloff=3
@@ -62,6 +82,12 @@ augroup resCur
   autocmd BufWinEnter * call ResCur()
 augroup END
 
+map tj :tabnext<CR>
+map tk :tabprev<CR>
+
+" CtrlP
+map <Leader>p :CtrlP<CR>
+
 " NERDTree
 map <Leader>n :NERDTreeToggle<CR>
 
@@ -71,44 +97,68 @@ nnoremap <c-k> <c-w>k
 nnoremap <c-h> <c-w>h
 nnoremap <c-l> <c-w>l
 
-" Open new split panes to right and bottom, which feels more natural
-set splitbelow
-set splitright
-
-" Configure syntastic syntax checking to check on open as well as save
-let g:syntastic_check_on_open=1
+" Move line
+nnoremap <C-j> :m+<CR>==
+nnoremap <C-k> :m-2<CR>==
 
 " Ruby
 imap <c-l> <space>=><space>
 
 " RSpec
-let g:rspec_command = "!bin/rspec {spec}"
+map <Leader>r :call RunTest()<CR>
+map <Leader>R :call RunNearestTest()<CR>
 
-map <Leader>t :call RunCurrentSpecFile()<CR>
-map <Leader>s :call RunNearestSpec()<CR>
-map <Leader>l :call RunLastSpec()<CR>
+function! RunTest()
+  call RunTestFile(FindTestFile())
+endfunction
 
-" ag
-" The Silver Searcher
-if executable('ag')
-  " Use ag over grep
-  set grepprg=ag\ --nogroup\ --nocolor
+function! RunNearestTest()
+  call RunTestFile(FindTestFile() . ':' . line('.'))
+endfunction
 
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+function! FindTestFile()
+  let current_file = expand("%")
+  let spec_file = current_file
 
-  " ag is fast enough that CtrlP doesn't need to cache
-  let g:ctrlp_use_caching = 0
-endif
+  if match(current_file, '_spec.rb$') == -1
+    let spec_file = substitute(spec_file, '^app/', '', '')
+    let spec_file = substitute(spec_file, '.rb$', '_spec.rb', '')
 
-" bind K to grep word under cursor
-nnoremap K :grep! "\b<C-R><C-W>\b"<CR>:cw<CR>
+    let spec_file = 'spec/' . spec_file
+  endif
 
-" bind \ (backward slash) to grep shortcut
-command -nargs=+ -complete=file -bar Ag silent! grep! <args>|cwindow|redraw!
+  return spec_file
+endfunction
+
+function! RunTestFile(filename)
+  write
+
+  if filereadable('bin/rspec')
+    exec ":!bin/rspec --format documentation " . a:filename
+  else
+    exec ":!bundle exec rspec --format documentation " . a:filename
+  endif
+endfunction
 
 " Clear the search buffer when hitting return
 nnoremap <cr> :nohlsearch<cr>
 
 " load the plugin and indent settings for the detected filetype
 filetype plugin indent on
+
+" Clean unnecessary spaces
+function! <SID>StripTrailingWhitespaces()
+    " Preparation: save last search, and cursor position.
+    let _s=@/
+    let l = line(".")
+    let c = col(".")
+    " Do the business:
+    %s/\s\+$//e
+    " Clean up: restore previous search history, and cursor position
+    let @/=_s
+    call cursor(l, c)
+endfunction
+
+nnoremap <silent> <F5> :call <SID>StripTrailingWhitespaces()<CR>
+
+"autocmd BufWritePre *.py,*.js,*.rb,*.erb,*.jbuilder,*.less,*.css :call <SID>StripTrailingWhitespaces()
