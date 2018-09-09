@@ -70,6 +70,7 @@ set t_ti= t_te=
 set wildmode=longest,list
 
 " vim-go {
+    let g:go_fmt_command = "goimports"
     let g:go_fmt_fail_silently = 1
     let g:go_highlight_types = 1
     let g:go_highlight_fields = 1
@@ -86,6 +87,7 @@ set wildmode=longest,list
     let g:go_highlight_variable_assignments = 1
     let g:go_echo_command_info=0                              " do not return SUCCESS/FAILURE in the status bar
     let g:go_auto_type_info=1                                 " automaticaly show identifier information when moving cursor
+    let g:go_fmt_autosave=1
     augroup VimGo
         au!
         au FileType go nmap <leader>t  <Plug>(go-test)
