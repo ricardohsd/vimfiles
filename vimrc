@@ -5,6 +5,7 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 
 call plug#begin('~/.vim/bundle')
+    Plug 'scrooloose/nerdtree'
     Plug 'tpope/vim-sensible'
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-surround'
@@ -106,6 +107,10 @@ set wildmode=longest,list
     let g:ale_sign_warning = '⚠'
     let g:ale_lint_on_save = 1
     let g:ale_lint_on_text_changed = 'never'
+" }
+
+" NerdTree {
+    map <Leader>p :NERDTreeToggle<CR>
 " }
 
 " Key maps {
