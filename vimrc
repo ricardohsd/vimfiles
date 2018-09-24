@@ -9,6 +9,7 @@ call plug#begin('~/.vim/bundle')
     Plug 'tpope/vim-sensible'
     Plug 'tpope/vim-commentary'
     Plug 'tpope/vim-surround'
+    Plug 'tpope/vim-fugitive'
     Plug 'w0rp/ale'
     Plug 'maralla/completor.vim'
     Plug 'terryma/vim-multiple-cursors'
