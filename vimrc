@@ -13,6 +13,7 @@ call plug#begin('~/.vim/bundle')
     Plug 'w0rp/ale'
     Plug 'maralla/completor.vim'
     Plug 'terryma/vim-multiple-cursors'
+    Plug 'mileszs/ack.vim'
     Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 call plug#end()
 
@@ -115,6 +116,17 @@ set wildmode=longest,list
 
 " NerdTree {
     map <Leader>p :NERDTreeToggle<CR>
+" }
+
+" Ack {
+  if executable('ag')
+    let g:ackprg = 'ag --vimgrep'
+  endif
+
+  cnoreabbrev ag Ack
+  cnoreabbrev aG Ack
+  cnoreabbrev Ag Ack
+  cnoreabbrev AG Ack
 " }
 
 " Key maps {
