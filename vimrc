@@ -16,6 +16,7 @@ call plug#begin('~/.vim/bundle')
     Plug 'terryma/vim-multiple-cursors'
     Plug 'mileszs/ack.vim'
     Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+    Plug 'ctrlpvim/ctrlp.vim'
 call plug#end()
 
 " colors
